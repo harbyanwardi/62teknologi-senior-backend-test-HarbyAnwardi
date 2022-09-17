@@ -14,6 +14,19 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OwnerController extends Controller
 {
+    public function index(Request $request)
+    {
+        $userCurrent =  Auth::user();
+        $kost = Kost::where('owner_id', '=', $userCurrent['id'])->get();
+        
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $kost
+        ]);
+
+    }
+
     public function create(Request $request)
     {
         $rules = [
@@ -64,7 +77,6 @@ class OwnerController extends Controller
 
     public function update(Request $request, $id)
     {
-        dd($request->all());
         $rules = [
             'kost_name' => 'required|string',
             'location' => 'required|string',
@@ -113,5 +125,24 @@ class OwnerController extends Controller
             'status' => 'success',
             'data' => $kost,
         ], 200);
+    }
+
+    public function destroy($id)
+    {
+        $kost = Kost::find($id);
+        if(!$kost) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kost Not Found'
+            ],404);
+        }
+        $kost->delete();
+
+        return response()->json([
+            'code' => 200,
+            'status' => 'success',
+            'message' => 'Deleted',
+
+        ],200);
     }
 }

@@ -21,10 +21,16 @@ Route::post('login', 'UserController@login');
 
 Route::post('users', 'UserController@create');
 
+Route::get('searchkost', 'CustomerController@index');
+Route::get('searchkost/{id}', 'CustomerController@detailKost');
+
 
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('users', 'UserController@index');
 
+    Route::get('kost', 'OwnerController@index');
     Route::post('kost', 'OwnerController@create');
     Route::put('kost/{id}', 'OwnerController@update');
+
+    Route::post('availkost/{id}', 'CustomerController@askAvailabilityRoom');
 });

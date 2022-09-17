@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKost extends Migration
+class CreateLogAskAvailRoom extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateKost extends Migration
      */
     public function up()
     {
-        Schema::create('kost', function (Blueprint $table) {
+        Schema::create('log_ask_avail_room', function (Blueprint $table) {
             $table->id();
-            $table->string('kost_name');
-            $table->string('location');
-            $table->integer('price');
+            $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('kost_id')->constrained('kost')->onDelete('cascade');
+            $table->string('message');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateKost extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kost');
+        Schema::dropIfExists('log_ask_avail_room');
     }
 }
