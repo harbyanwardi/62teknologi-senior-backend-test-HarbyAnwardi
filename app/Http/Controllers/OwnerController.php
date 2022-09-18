@@ -7,10 +7,10 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-Use Exception;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Tymon\JWTAuth\Facades\JWTAuth; 
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OwnerController extends Controller
 {
@@ -18,13 +18,12 @@ class OwnerController extends Controller
     {
         $userCurrent =  Auth::user();
         $kost = Kost::where('owner_id', '=', $userCurrent['id'])->get();
-        
 
         return response()->json([
+            'code' => 200,
             'status' => 'success',
             'data' => $kost
         ]);
-
     }
 
     public function create(Request $request)
@@ -37,42 +36,40 @@ class OwnerController extends Controller
         $data = $request->all();
 
         $validator = Validator::make($data, $rules);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json([
                 'code' => 400,
                 'status' => 'error',
                 'message' => $validator->errors()
             ], 400);
         }
-       
 
+       
         $userCurrent =  Auth::user();
-        
+
 
         $insertData = array(
             "kost_name" => $data['kost_name'],
             "location" => $data['location'],
             "price" => $data['price'],
-            "owner_id" => $userCurrent['id']
+            "owner_id" => $userCurrent['id'],
         );
 
-        try { 
+        try {
             $kost = Kost::create($insertData);
             return response()->json([
                 'code' => 201,
                 'status' => 'success',
                 'data' => $kost,
 
-            ],201);
-          } catch(Exception $e) { 
+            ], 201);
+        } catch (Exception $e) {
             return response()->json([
                 'code' => 400,
                 'status' => 'error',
                 'message' => $e->getMessage()
             ], 400);
-          }
-
-        
+        }
     }
 
     public function update(Request $request, $id)
@@ -80,7 +77,7 @@ class OwnerController extends Controller
         $rules = [
             'kost_name' => 'required|string',
             'location' => 'required|string',
-            'price' => 'required|integer',
+            'price' => 'required|integer'
         ];
 
         $data = $request->all();
@@ -104,20 +101,20 @@ class OwnerController extends Controller
         }
 
         $currentUser = Auth::user();
-        if($currentUser['id'] != $kost->owner_id) {
+        if ($currentUser['id'] != $kost->owner_id) {
             return response()->json([
                 'code' => 400,
                 'status' => 'error',
                 'message' => 'Only Owner Kost can update this kost',
             ], 400);
         }
-
+       
         $updateData = array(
             "kost_name" => $data['kost_name'],
             "location" => $data['location'],
             "price" => $data['price']
         );
-        
+       
         $kost->fill($updateData);
         $kost->save();
         return response()->json([
@@ -130,11 +127,11 @@ class OwnerController extends Controller
     public function destroy($id)
     {
         $kost = Kost::find($id);
-        if(!$kost) {
+        if (!$kost) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Kost Not Found'
-            ],404);
+            ], 404);
         }
         $kost->delete();
 
@@ -143,6 +140,6 @@ class OwnerController extends Controller
             'status' => 'success',
             'message' => 'Deleted',
 
-        ],200);
+        ], 200);
     }
 }

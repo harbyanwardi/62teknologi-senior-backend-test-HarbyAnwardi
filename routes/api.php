@@ -31,6 +31,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('kost', 'OwnerController@index');
     Route::post('kost', 'OwnerController@create');
     Route::put('kost/{id}', 'OwnerController@update');
+    Route::delete('kost/{id}', 'OwnerController@destroy');
 
     Route::post('availkost/{id}', 'CustomerController@askAvailabilityRoom');
 });

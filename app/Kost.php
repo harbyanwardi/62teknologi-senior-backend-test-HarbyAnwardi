@@ -9,7 +9,7 @@ class Kost extends Model
     protected $table = 'kost';
 
     protected $fillable = [
-        'kost_name','location','price','img','img_path','owner_id'
+        'kost_name','location','price','owner_id'
     ];
 
     protected $casts = [
