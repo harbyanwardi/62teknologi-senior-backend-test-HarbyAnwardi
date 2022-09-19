@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserCollection;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,20 +30,7 @@ class UserController extends Controller
 
     }
 
-    public function show($id)
-    {
-        $mentor = User::find($id);
-        if(!$mentor) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Mentor Not Found'
-            ],404);
-        }
-        return response()->json([
-            'status' => 'success',
-            'data' => $mentor
-        ]);
-    }
+    
     public function create(Request $request)
     {
         $rules = [
@@ -81,11 +69,14 @@ class UserController extends Controller
         
         try { 
             $user = User::create($insertData);
-            $user['token'] = JWTAuth::fromUser($user);
+            $data = array(
+                "credit" => $user->credit,
+                "token" => JWTAuth::fromUser($user),
+            );
             return response()->json([
                 'code' => 201,
                 'status' => 'success',
-                'data' => $user,
+                'data' => $data,
 
             ],201);
           } catch(Exception $e) { 
@@ -106,10 +97,10 @@ class UserController extends Controller
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    'code' => 400,
+                    'code' => 401,
                     'status' => 'error',
                     'message' => 'invalid credentials'
-                ], 400);
+                ], 401);
             }
         } catch (JWTException $e) {
            

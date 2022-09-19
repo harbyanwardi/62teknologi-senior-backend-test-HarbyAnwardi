@@ -1,0 +1,454 @@
+openapi: 3.0.2
+info:
+  title: MamiKos App
+  version: '1.0'
+servers:
+  - url: http://localhost:8000/api
+paths:
+  /users:
+    post:
+      tags:
+        - Users API
+      summary: Create User
+      description: Create User
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                type:
+                  enum:
+                    - owner
+                    - reguler
+                  description: fill with owner, reguler, premium
+                  type: string
+      responses:
+        '200':
+          description: Success Create User
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        credit:
+                          type: number
+                        token:
+                          type: string
+  /login:
+    post:
+      tags:
+        - Users API
+      summary: Login User
+      description: Login User
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Success Create Category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '401':
+          description: Invalid Credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+        '500':
+          description: Token Exception Error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Response'
+  /kost:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Owner Kost API
+      summary: List Kost by Owner
+      description: List Kost by Owner
+      responses:
+        '200':
+          description: Success Get
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kost_name:
+                          type: number
+                        location:
+                          type: string
+                        price:
+                          type: integer
+                        owner:
+                          type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '403':
+          description: Role not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Owner Kost API
+      summary: Add Kost
+      description: Add Kost
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                kost_name:
+                  type: string
+                location:
+                  type: string
+                price:
+                  type: integer
+      responses:
+        '200':
+          description: Success Create Kost
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '403':
+          description: Role not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Owner Kost API
+      summary: Update Kost
+      description: Update Kost
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                kost_name:
+                  type: string
+                location:
+                  type: string
+                price:
+                  type: integer
+      responses:
+        '200':
+          description: Success Update Kost
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '403':
+          description: Role not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Owner Kost API
+      summary: Delete Kost
+      description: Delete Kost
+      responses:
+        '200':
+          description: Success Delete Kost
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '403':
+          description: Role not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+  /searchkost:
+    get:
+      tags:
+        - Customer Kost API
+      summary: List Kost
+      description: List Kost
+      parameters:
+        - in: query
+          name: price_max
+          description: harga maksimal
+          schema:
+            type: integer
+        - in: query
+          name: price_min
+          description: harga minimal
+          schema:
+            type: integer
+        - in: query
+          name: name
+          description: nama kost
+          schema:
+            type: string
+        - in: query
+          name: location
+          description: lokasi kost
+          schema:
+            type: string
+        - in: query
+          name: order
+          
+          description: sortir
+          schema:
+            type: string
+            enum:
+            - asc
+            - desc
+      responses:
+        '200':
+          description: Success Get
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kost_name:
+                          type: number
+                        location:
+                          type: string
+                        price:
+                          type: integer
+                        owner:
+                          type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+        '403':
+          description: Role not allowed
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+  /searchkost/{kostId}:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customer Kost API
+      summary: Detail Kost
+      description: Detail Kost
+      parameters:
+        - in: path
+          name: kostId
+          description: Kost Id
+          required: true
+          schema:
+            type: integer
+            
+      responses:
+        '200':
+          description: Success Get Detail Kost
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kost_name:
+                          type: number
+                        location:
+                          type: string
+                        price:
+                          type: integer
+                        owner:
+                          type: string
+                        publish_date:
+                          type: string
+        '400':
+          description: Kost Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                 - $ref: '#/components/schemas/Response'
+  /availkost/{kostId}:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Customer Kost API
+      summary: Ask Availability Kost
+      description: Ask Availability Kost
+      parameters:
+        - in: path
+          name: kostId
+          description: Kost Id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        '200':
+          description: Success Ask Availability Kost
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: number
+                  status:
+                    type: string
+                  credit:
+                    type: integer
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentication for API
+  schemas:
+    Response:
+      type: object
+      properties:
+        code:
+          type: number
+        status:
+          type: string
+        message:
+          type: string
+    CreateOrUpdateCategory:
+      type: object
+      properties:
+        name:
+          type: string

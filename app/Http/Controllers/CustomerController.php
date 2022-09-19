@@ -32,6 +32,7 @@ class CustomerController extends Controller
         }
         $order = $request->query('order');
         
+        
         $kost->when($name, function($query) use ($name) {
             return $query->where('kost_name', 'like', '%'. $name .'%');
         });
@@ -60,7 +61,10 @@ class CustomerController extends Controller
 
     public function detailKost($id)
     {
-        $kost = Kost::find($id);
+        $kost = Kost::query();
+        $kost->join('users', 'users.id', '=', 'kost.owner_id');
+        $kost->select('kost.kost_name','kost.location','kost.price','users.fullname as owner', 'kost.created_at as publish_date');
+        $kost->where('kost.id', $id);
         if(!$kost) {
             return response()->json([
                 'code'  => 400,
@@ -71,7 +75,7 @@ class CustomerController extends Controller
         return response()->json([
             'code'  => 200,
             'status' => 'success',
-            'data' => $kost
+            'data' => $kost->get()
         ],200);
     }
 

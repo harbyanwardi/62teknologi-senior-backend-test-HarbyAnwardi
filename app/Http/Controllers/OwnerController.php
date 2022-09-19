@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\KostCollection;
 use App\Kost;
 use App\User;
 use Illuminate\Http\Request;
@@ -17,7 +18,9 @@ class OwnerController extends Controller
     public function index(Request $request)
     {
         $userCurrent =  Auth::user();
-        $kost = Kost::where('owner_id', '=', $userCurrent['id'])->get();
+        $kost = Kost::join('users', 'users.id', '=', 'kost.owner_id')
+        ->where('owner_id', '=', $userCurrent['id'])
+        ->get(['kost.kost_name','kost.location','kost.price', 'users.fullname as owner']);
 
         return response()->json([
             'code' => 200,
@@ -46,6 +49,13 @@ class OwnerController extends Controller
 
        
         $userCurrent =  Auth::user();
+        // if($userCurrent->type != 'owner') {
+        //     return response()->json([
+        //         'code' => 403,
+        //         'status' => 'error',
+        //         'message' => 'Only owner is allowed to Create Kost'
+        //     ], 403);
+        // }
 
 
         $insertData = array(
@@ -60,7 +70,7 @@ class OwnerController extends Controller
             return response()->json([
                 'code' => 201,
                 'status' => 'success',
-                'data' => $kost,
+                'message' => 'Kost Successfully Created',
 
             ], 201);
         } catch (Exception $e) {
@@ -103,10 +113,10 @@ class OwnerController extends Controller
         $currentUser = Auth::user();
         if ($currentUser['id'] != $kost->owner_id) {
             return response()->json([
-                'code' => 400,
+                'code' => 403,
                 'status' => 'error',
                 'message' => 'Only Owner Kost can update this kost',
-            ], 400);
+            ], 403);
         }
        
         $updateData = array(
@@ -120,7 +130,7 @@ class OwnerController extends Controller
         return response()->json([
             'code' => 200,
             'status' => 'success',
-            'data' => $kost,
+            'message' => 'Successfully Update Kost',
         ], 200);
     }
 
@@ -129,16 +139,27 @@ class OwnerController extends Controller
         $kost = Kost::find($id);
         if (!$kost) {
             return response()->json([
+                'code' => 400,
                 'status' => 'error',
                 'message' => 'Kost Not Found'
             ], 404);
         }
+
+        $currentUser = Auth::user();
+        if ($currentUser['id'] != $kost->owner_id) {
+            return response()->json([
+                'code' => 403,
+                'status' => 'error',
+                'message' => 'Only Owner Kost can delete this kost',
+            ], 403);
+        }
+
         $kost->delete();
 
         return response()->json([
             'code' => 200,
             'status' => 'success',
-            'message' => 'Deleted',
+            'message' => 'Successfully Deleted',
 
         ], 200);
     }
