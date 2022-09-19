@@ -26,12 +26,13 @@ Route::get('searchkost/{id}', 'CustomerController@detailKost');
 
 
 Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('users', 'UserController@index');
+    
+    Route::post('availkost/{id}', 'CustomerController@askAvailabilityRoom');
+});
 
+Route::group(['middleware' => ['jwt.verify','ownerRole']], function() {
     Route::get('kost', 'OwnerController@index');
-    Route::post('kost', 'OwnerController@create');
+    Route::post('kost','OwnerController@create');
     Route::put('kost/{id}', 'OwnerController@update');
     Route::delete('kost/{id}', 'OwnerController@destroy');
-
-    Route::post('availkost/{id}', 'CustomerController@askAvailabilityRoom');
 });
