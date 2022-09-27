@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\KostCollection;
-use App\Kost;
+use App\Models\Kost;
+use App\Repository\Repository;
+use App\Service\KostService;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +17,11 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class OwnerController extends Controller
 {
+    protected $kostService;
+    public function __construct(KostService $kostService)
+    {
+        $this->kostService = $kostService;
+    }
     public function index(Request $request)
     {
         $userCurrent =  Auth::user();
@@ -48,7 +55,7 @@ class OwnerController extends Controller
         }
 
        
-        $userCurrent =  Auth::user();
+        // $userCurrent =  Auth::user();
         // if($userCurrent->type != 'owner') {
         //     return response()->json([
         //         'code' => 403,
@@ -58,15 +65,18 @@ class OwnerController extends Controller
         // }
 
 
-        $insertData = array(
-            "kost_name" => $data['kost_name'],
-            "location" => $data['location'],
-            "price" => $data['price'],
-            "owner_id" => $userCurrent['id'],
-        );
+        // $insertData = array(
+        //     "kost_name" => $data['kost_name'],
+        //     "location" => $data['location'],
+        //     "price" => $data['price'],
+        //     "owner_id" => $userCurrent['id'],
+        // );
 
         try {
-            $kost = Kost::create($insertData);
+            //$kost = Kost::create($insertData);
+            //controller hanya untuk proses bisnis , seperti menentukan validasi dan input
+            //untuk logic bisnis , kita gunakan service
+            $this->kostService->add($request->all());
             return response()->json([
                 'code' => 201,
                 'status' => 'success',
