@@ -1,16 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Kost extends Model
+class Category extends Model
 {
-    protected $table = 'kost';
+    protected $table = 'businesses_categories';
 
-    protected $fillable = [
-        'kost_name','location','price','owner_id'
-    ];
+    protected $guarded = ['id'];
 
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:m:s',

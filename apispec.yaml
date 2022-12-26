@@ -1,435 +1,479 @@
 openapi: 3.0.2
 info:
-  title: MamiKos App
-  version: '1.0'
+  title: EnamDua App
+  version: "1.0"
 servers:
   - url: http://localhost:8000/api
 paths:
-  /users:
-    post:
-      tags:
-        - Users API
-      summary: Create User
-      description: Create User
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                fullname:
-                  type: string
-                username:
-                  type: string
-                password:
-                  type: string
-                type:
-                  enum:
-                    - owner
-                    - reguler
-                  description: fill with owner, reguler, premium
-                  type: string
-      responses:
-        '200':
-          description: Success Create User
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        credit:
-                          type: number
-                        token:
-                          type: string
-  /login:
-    post:
-      tags:
-        - Users API
-      summary: Login User
-      description: Login User
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-      responses:
-        '200':
-          description: Success Create Category
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
-                  message:
-                    type: string
-                  token:
-                    type: string
-        '401':
-          description: Invalid Credentials
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/Response'
-        '500':
-          description: Token Exception Error
-          content:
-            application/json:
-              schema:
-                type: object
-                $ref: '#/components/schemas/Response'
-  /kost:
-    get:
-      security:
-        - bearerAuth: []
-      tags:
-        - Owner Kost API
-      summary: List Kost by Owner
-      description: List Kost by Owner
-      responses:
-        '200':
-          description: Success Get
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        kost_name:
-                          type: number
-                        location:
-                          type: string
-                        price:
-                          type: integer
-                        owner:
-                          type: string
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '403':
-          description: Role not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-    post:
-      security:
-        - bearerAuth: []
-      tags:
-        - Owner Kost API
-      summary: Add Kost
-      description: Add Kost
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                kost_name:
-                  type: string
-                location:
-                  type: string
-                price:
-                  type: integer
-      responses:
-        '200':
-          description: Success Create Kost
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '403':
-          description: Role not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-    put:
-      security:
-        - bearerAuth: []
-      tags:
-        - Owner Kost API
-      summary: Update Kost
-      description: Update Kost
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                kost_name:
-                  type: string
-                location:
-                  type: string
-                price:
-                  type: integer
-      responses:
-        '200':
-          description: Success Update Kost
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '403':
-          description: Role not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-    delete:
-      security:
-        - bearerAuth: []
-      tags:
-        - Owner Kost API
-      summary: Delete Kost
-      description: Delete Kost
-      responses:
-        '200':
-          description: Success Delete Kost
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '403':
-          description: Role not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-  /searchkost:
+  /business/search:
     get:
       tags:
-        - Customer Kost API
-      summary: List Kost
-      description: List Kost
+        - Business
+      summary: List Business
       parameters:
         - in: query
-          name: price_max
-          description: harga maksimal
+          name: page
+          description: Page
+          required: false
           schema:
             type: integer
         - in: query
-          name: price_min
-          description: harga minimal
+          name: price_range
+          description: Price range by select box
+          required: false
           schema:
-            type: integer
+            type: number
         - in: query
-          name: name
-          description: nama kost
+          name: sort
+          description: Sort Price Order
+          required: false
           schema:
             type: string
         - in: query
-          name: location
-          description: lokasi kost
+          name: limit
+          description: Limit Per Page
+          required: false
           schema:
-            type: string
-        - in: query
-          name: order
-          
-          description: sortir
-          schema:
-            type: string
-            enum:
-            - asc
-            - desc
+            type: number
+      description: List Business
       responses:
-        '200':
-          description: Success Get
+        "200":
+          description: List Business
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
                   data:
                     type: array
                     items:
                       type: object
                       properties:
-                        kost_name:
+                        id:
                           type: number
+                        alias:
+                          type: string
+                        categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              alias:
+                                type: string
+                              title:
+                                type: string
+                        coordinates:
+                          type: object
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+                        display_phone:
+                          type: string
+                        distance:
+                          type: number
+                        image_url:
+                          type: string
+                        is_closed:
+                          type: boolean
                         location:
+                          type: object
+                          properties:
+                            address1:
+                              type: string
+                            address2:
+                              type: string
+                            address3:
+                              type: string
+                            city:
+                              type: string
+                            country:
+                              type: string
+                            state:
+                              type: string
+                            zip_code:
+                              type: string
+                        display_location:
+                          type: string
+                        name:
+                          type: string
+                        phone:
                           type: string
                         price:
-                          type: integer
-                        owner:
+                          type: number
+                        rating:
                           type: string
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-        '403':
-          description: Role not allowed
-          content:
-            application/json:
-              schema:
-                type: object
-                allOf:
-                 - $ref: '#/components/schemas/Response'
-  /searchkost/{kostId}:
-    get:
-      security:
-        - bearerAuth: []
+                        review_count:
+                          type: string
+                        transactions:
+                          type: string
+                        url:
+                          type: string
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                      last:
+                        type: string
+                      prev:
+                        type: string
+                      next:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: number
+                      from:
+                        type: number
+                      last_page:
+                        type: number
+                      path:
+                        type: string
+                      per_page:
+                        type: number
+                      to:
+                        type: number
+                      total:
+                        type: number
+  /business:
+    post:
       tags:
-        - Customer Kost API
-      summary: Detail Kost
-      description: Detail Kost
+        - Business
+      summary: Add Business
+      description: Add Business
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                categories:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      alias:
+                        type: string
+                      title:
+                        type: string
+                coordinates:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                
+                distance:
+                  type: number
+                is_closed:
+                  type: boolean
+                location:
+                  type: object
+                  properties:
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                    address3:
+                      type: string
+                    city:
+                      type: string
+                    country:
+                      type: string
+                    state:
+                      type: string
+                    zip_code:
+                      type: string
+                phone:
+                  type: string
+                price:
+                  type: number
+                rating:
+                  type: string
+                review_count:
+                  type: string
+                transactions:
+                  type: string
+                url:
+                  type: string
+                image: 
+                  type: string
+                  format: byte # base64-encoded file contents 
+
+      responses:
+        "200":
+          description: Success Create Business
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/Response"
+  /business/{BusinessId}:  
+    delete:
+      tags:
+        - Business
+      summary: Delete Business
+      description: Delete Business
       parameters:
         - in: path
-          name: kostId
-          description: Kost Id
+          name: BusinessId
+          description: Business Id
           required: true
           schema:
             type: integer
-            
+
       responses:
-        '200':
-          description: Success Get Detail Kost
+        "200":
+          description: Success Delete Business
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  code:
-                    type: number
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        kost_name:
-                          type: number
-                        location:
-                          type: string
-                        price:
-                          type: integer
-                        owner:
-                          type: string
-                        publish_date:
-                          type: string
-        '400':
+                allOf:
+                  - $ref: "#/components/schemas/Response"
+        "400":
           description: Kost Not Found
           content:
             application/json:
               schema:
                 type: object
                 allOf:
-                 - $ref: '#/components/schemas/Response'
-  /availkost/{kostId}:
-    post:
-      security:
-        - bearerAuth: []
+                  - $ref: "#/components/schemas/Response"
+    put:
       tags:
-        - Customer Kost API
-      summary: Ask Availability Kost
-      description: Ask Availability Kost
+        - Business
+      summary: Update Business
       parameters:
         - in: path
-          name: kostId
-          description: Kost Id
+          name: BusinessId
+          description: Business Id
           required: true
           schema:
             type: integer
+      description: Update Business
       requestBody:
         content:
-          application/x-www-form-urlencoded:
+          application/json:
             schema:
               type: object
               properties:
-                message:
+                name:
                   type: string
+                categories:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      alias:
+                        type: string
+                      title:
+                        type: string
+                coordinates:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                
+                distance:
+                  type: number
+                is_closed:
+                  type: boolean
+                location:
+                  type: object
+                  properties:
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                    address3:
+                      type: string
+                    city:
+                      type: string
+                    country:
+                      type: string
+                    state:
+                      type: string
+                    zip_code:
+                      type: string
+                phone:
+                  type: string
+                price:
+                  type: number
+                rating:
+                  type: string
+                review_count:
+                  type: string
+                transactions:
+                  type: string
+                url:
+                  type: string
+                image: 
+                  type: string
+                  format: byte # base64-encoded file contents 
+
       responses:
-        '200':
-          description: Success Ask Availability Kost
+        "200":
+          description: Success Update Business
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                  - $ref: "#/components/schemas/Response"
+       
+    get:
+      tags:
+        - Business
+      summary: Detail Business
+      parameters:
+        - in: path
+          name: BusinessId
+          description: Business Id
+          required: true
+          schema:
+            type: integer
+      description: Detail Business
+      responses:
+        "200":
+          description: Detail Business
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  code:
-                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        alias:
+                          type: string
+                        categories:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              alias:
+                                type: string
+                              title:
+                                type: string
+                        coordinates:
+                          type: object
+                          properties:
+                            latitude:
+                              type: number
+                            longitude:
+                              type: number
+                        display_phone:
+                          type: string
+                        distance:
+                          type: number
+                        image_url:
+                          type: string
+                        is_closed:
+                          type: boolean
+                        location:
+                          type: object
+                          properties:
+                            address1:
+                              type: string
+                            address2:
+                              type: string
+                            address3:
+                              type: string
+                            city:
+                              type: string
+                            country:
+                              type: string
+                            state:
+                              type: string
+                            zip_code:
+                              type: string
+                        display_location:
+                          type: string
+                        name:
+                          type: string
+                        phone:
+                          type: string
+                        price:
+                          type: number
+                        rating:
+                          type: string
+                        review_count:
+                          type: string
+                        transactions:
+                          type: string
+                        url:
+                          type: string
+                  links:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                      last:
+                        type: string
+                      prev:
+                        type: string
+                      next:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      current_page:
+                        type: number
+                      from:
+                        type: number
+                      last_page:
+                        type: number
+                      path:
+                        type: string
+                      per_page:
+                        type: number
+                      to:
+                        type: number
+                      total:
+                        type: number
+  
+  /category:
+    get:
+      tags:
+        - Category
+      summary: List Category
+      description: List Category
+      responses:
+        "200":
+          description: Success Get
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  
                   status:
                     type: string
-                  credit:
-                    type: integer
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        alias:
+                          type: string
+                        title:
+                          type: integer
+                       
 components:
   securitySchemes:
     bearerAuth:

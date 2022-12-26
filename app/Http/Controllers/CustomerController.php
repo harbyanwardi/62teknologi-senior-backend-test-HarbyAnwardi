@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Kost;
+use App\Kost as AppKost;
+use App\Models\Kost;
 use App\LogAvailRoom;
 use App\User;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 Use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class CustomerController extends Controller
 {
@@ -121,4 +123,17 @@ class CustomerController extends Controller
             'credit' => $creditCurrent
         ],200);
     }
+
+    public function getWithRedis() {
+        $query = Cache::remember("user_all", 10*60, function() {
+            return User::all();
+        });
+        return $query;
+    }
+
+    public function getWithoutRedis() {
+        $query = User::all();
+        return $query;
+    }
+
 }

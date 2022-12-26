@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+//use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,22 +18,17 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
 Route::post('login', 'UserController@login');
 
-Route::post('users', 'UserController@create');
+Route::get('business/search', 'BusinessController@index');
+Route::post('business', 'BusinessController@store');
+Route::put('business/{id}', 'BusinessController@update');
+Route::get('business/{id}', 'BusinessController@show');
+Route::delete('business/{id}', 'BusinessController@destroy');
 
-Route::get('searchkost', 'CustomerController@index');
-Route::get('searchkost/{id}', 'CustomerController@detailKost');
+Route::get('category', 'CategoryController@index');
 
 
-Route::group(['middleware' => ['jwt.verify']], function() {
-    
-    Route::post('availkost/{id}', 'CustomerController@askAvailabilityRoom');
-});
 
-Route::group(['middleware' => ['jwt.verify','ownerRole']], function() {
-    Route::get('kost', 'OwnerController@index');
-    Route::post('kost','OwnerController@create');
-    Route::put('kost/{id}', 'OwnerController@update');
-    Route::delete('kost/{id}', 'OwnerController@destroy');
-});
+

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKost extends Migration
+class CreateTableBusinessCategoryRelation extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateKost extends Migration
      */
     public function up()
     {
-        Schema::create('kost', function (Blueprint $table) {
+        Schema::create('business_category_relation', function (Blueprint $table) {
             $table->id();
-            $table->string('kost_name');
-            $table->string('location');
-            $table->integer('price');
-            $table->foreignId('owner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('business_id')->constrained('businesses')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('businesses_categories')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateKost extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kost');
+        Schema::dropIfExists('business_category_relation');
     }
 }
