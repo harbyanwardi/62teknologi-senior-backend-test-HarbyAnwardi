@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Repository\KostImplement;
 use App\Repository\Repository;
-use App\Service\KostService;
-use App\Service\KostServiceImpl;
 use Illuminate\Support\ServiceProvider;
 
 class RepoServiceProvider extends ServiceProvider
@@ -17,8 +15,8 @@ class RepoServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Repository::class, KostImplement::class);
-        $this->app->bind(KostService::class, KostServiceImpl::class);
+        // $this->app->bind(Repository::class, KostImplement::class);
+        // $this->app->bind(KostService::class, KostServiceImpl::class);
     }
 
     /**
