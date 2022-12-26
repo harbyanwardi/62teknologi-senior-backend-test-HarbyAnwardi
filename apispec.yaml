@@ -239,7 +239,7 @@ paths:
                 allOf:
                   - $ref: "#/components/schemas/Response"
         "400":
-          description: Kost Not Found
+          description: Business Not Found
           content:
             application/json:
               schema:

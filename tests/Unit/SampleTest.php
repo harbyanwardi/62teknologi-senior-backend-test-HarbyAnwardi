@@ -42,27 +42,8 @@ class SampleTest extends TestCase
 
         $respon = ['code', 'status', 'data'];
 
-        $this->get(route('api.searchkost'))->assertStatus(200)->assertJsonStructure($respon);
+        $this->get(route('business/search'))->assertStatus(200)->assertJsonStructure($respon);
     }
 
-    public function testDetailKost()
-    {
-        $response = $this->json('GET', '/api/searchkost/2');
-        $response
-            ->assertStatus(200)
-            ->assertJsonStructure([
-                'code',
-                'status',
-                'data' => [
-                    '*' => [
-                       'kost_name',
-                       'location',
-                       'price',
-                       'owner',
-                       
-                   ]
-                 ]
-               
-            ]);
-    }
+    
 }
