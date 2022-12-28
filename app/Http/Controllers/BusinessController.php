@@ -28,7 +28,18 @@ class BusinessController extends Controller
         $business = new Business();
         $data = $business->getBusinessDetail($id);
         return response()->json([
-            'code'  => 200,
+            
+            'status' => 'success',
+            'data' => $data
+        ],200);
+    }
+
+    public function showslug($slug)
+    {
+        $business = new Business();
+        $data = $business->getBusinessDetailSlug($slug);
+        return response()->json([
+            
             'status' => 'success',
             'data' => $data
         ],200);
@@ -99,7 +110,6 @@ class BusinessController extends Controller
 
         if ($validation->fails()) {
             return response()->json([
-                'code' => 400,
                 'status' => 'error',
                 'message' => $validation->errors()
             ], 400);
@@ -108,7 +118,6 @@ class BusinessController extends Controller
 
         if (!$business) {
             return response()->json([
-                'code' => 400,
                 'status' => 'error',
                 'message' => 'Business not found',
             ], 400);
@@ -135,7 +144,6 @@ class BusinessController extends Controller
         $resp = $business_model->updateData($data_post,$id);
 
         return response()->json([
-            'code' => 200,
             'status' => 'success',
             'message' => 'Successfully Update Business',
         ], 200);
@@ -146,7 +154,6 @@ class BusinessController extends Controller
         $business = Business::find($id);
         if (!$business) {
             return response()->json([
-                'code' => 400,
                 'status' => 'error',
                 'message' => 'Business Not Found'
             ], 404);
@@ -154,7 +161,6 @@ class BusinessController extends Controller
         $business->delete();
 
         return response()->json([
-            'code' => 200,
             'status' => 'success',
             'message' => 'Successfully Deleted',
 

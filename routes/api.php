@@ -24,7 +24,8 @@ Route::post('login', 'UserController@login');
 Route::get('business/search', 'BusinessController@index');
 Route::post('business', 'BusinessController@store');
 Route::put('business/{id}', 'BusinessController@update');
-Route::get('business/{id}', 'BusinessController@show');
+// Route::get('business/{id}', 'BusinessController@show');
+Route::get('business/{slug}', 'BusinessController@showslug');
 Route::delete('business/{id}', 'BusinessController@destroy');
 
 Route::get('category', 'CategoryController@index');

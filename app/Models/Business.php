@@ -6,10 +6,12 @@ use App\Http\Resources\BusinessResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 class Business extends Model
 {
     //protected $table = 'businesses';
+    use Sluggable;
 
     protected $guarded = ['id'];
 
@@ -34,6 +36,15 @@ class Business extends Model
         return $this->hasOne('App\Models\BusinessesLocation', 'business_id', 'id')->select(['business_id', 'address1', 'address2', 'address3', 'city', 'country', 'state', 'zip_code']);
     }
 
+    public function sluggable(): array
+    {
+        return [
+            'alias' => [
+                'source' => 'name'
+            ]
+        ];
+    }
+
     public function getBusinesses($search)
     {
         $name = Arr::get($search, 'name', '');
@@ -43,9 +54,11 @@ class Business extends Model
         $longitude = Arr::get($search, 'longitude', '');
         $limit = Arr::get($search, 'limit', '');
         $open_now = Arr::get($search, 'open_now', '');
+        $category = Arr::get($search, 'category', '');
 
         $business = Business::query();
         $business->join('businesses_coordinates as coord', 'businesses.id', '=', 'coord.business_id');
+        $business->join('business_category_relation as cat_rel', 'businesses.id', '=', 'cat_rel.business_id');
         $business->when($name, function ($query) use ($name) {
             return $query->where('name', 'like', '%' . $name . '%');
         });
@@ -71,6 +84,9 @@ class Business extends Model
         $business->when($latitude, function ($query) use ($latitude) {
             return $query->where('coord.latitude', $latitude);
         });
+        $business->when($category, function ($query) use ($category) {
+            return $query->where('cat_rel.category_id', $category);
+        });
         $business->when($longitude, function ($query) use ($longitude) {
             return $query->where('coord.longitude', $longitude);
         });
@@ -84,6 +100,7 @@ class Business extends Model
         });
 
         $business->select('businesses.*', 'coord.latitude', 'coord.longitude');
+        $business->groupBy('businesses.id');
 
 
         $limits = (!empty($limit)) ? $limit : 6;
@@ -101,12 +118,19 @@ class Business extends Model
         return new BusinessResource($data->first());
     }
 
+    public function getBusinessDetailSlug($slug)
+    {
+        $data = Business::query();
+        $data->where('alias', $slug);
+        return new BusinessResource($data->first());
+    }
+
     public function insertData($data_post)
     {
 
         $data_business = array(
             "name" => $data_post['name'],
-            "alias" => Str::slug($data_post['name']),
+            // "alias" => Str::slug($data_post['name']),
             "phone" => $data_post['phone'],
             "distance" => $data_post['distance'],
             "is_closed" => $data_post['is_closed'],
