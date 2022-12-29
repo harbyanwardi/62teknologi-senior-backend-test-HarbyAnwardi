@@ -329,18 +329,18 @@ paths:
                 type: object
                 allOf:
                   - $ref: "#/components/schemas/Response"
-       
+  /business/{slug}:     
     get:
       tags:
         - Business
       summary: Detail Business
       parameters:
         - in: path
-          name: BusinessId
-          description: Business Id
+          name: slug
+          description: Business Slug Name
           required: true
           schema:
-            type: integer
+            type: string
       description: Detail Business
       responses:
         "200":
